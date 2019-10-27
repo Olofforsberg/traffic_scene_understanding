@@ -1,0 +1,5 @@
+# Traffic scene understanding
+
+This repository provides a traffic scene understanding by fusing LIDAR with semantic segmentation. The fusion is done by using stixels. Enet is used for semantic segmentation.
+
+![Traffic scene understanding](https://drive.google.com/open?id=0B5_8OL02KNUWSWd0ZlNuZWJjbFE)
