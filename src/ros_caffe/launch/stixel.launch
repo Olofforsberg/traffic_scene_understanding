@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<launch>
+  <rosparam command="load" file="$(find ros_caffe)/conf/param.yaml" />
+  <node pkg="ros_caffe" type="ros_caffe_test" name="ros_caffe_test" output="screen" >
+  <!-- launch-prefix="terminator -x gdb -args  -->
+
+  </node>
+</launch>

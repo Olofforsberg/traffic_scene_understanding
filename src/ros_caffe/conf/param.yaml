@@ -1,0 +1,5 @@
+ros_caffe:
+  camera_frame_topic: /camera/image_color
+  camera_info_topic: /camera/camera_info
+  velodyne_topic: /velodyne_points_right
+  publish_topic: /stixel_stuff

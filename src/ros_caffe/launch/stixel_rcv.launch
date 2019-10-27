@@ -1,0 +1,136 @@
+
+
+<launch>
+  <!-- Communcation with lower level systems using ehternet  -->
+  <arg name="sim_enabled" default="false"/>
+  <include file="$(find rcv_communication_bringup)/launch/default.launch">
+    <arg name="sim_enabled" value="$(arg sim_enabled)"/>
+  </include>
+
+  <!-- Publish odometry using tf -->
+  <include file="$(find rcv_localization_local)/launch/direct_odom_tf.launch">
+  <arg name="base_link_frame_id" value="base_link" />
+  </include>
+
+  <!-- TF frames and robot model -->
+  <include file="$(find rcv_description)/launch/rcv_state_publisher.launch">
+    <arg name="urdf_file" value="$(find xacro)/xacro.py '$(find rcv_description)/urdf/rcv_velo_mount.xacro'" />
+  </include>
+
+  <!-- Velodyne data from etherenet -->
+  <arg name="pcap" default=""/>
+
+  <!-- Skip left one
+  <include file="$(find velodyne_pointcloud)/launch/VLP16_points.launch">
+    <arg name="stream_id" value="left" />
+    <arg name="pcap" value="$(arg pcap)"/>
+    <arg name="device_ip" value="192.168.140.62"/>
+    <arg name="port" value="62000" />
+  </include>
+  -->
+
+  <!-- front one -->
+  <include file="$(find velodyne_pointcloud)/launch/VLP16_points.launch">
+    <arg name="stream_id" value="right" />
+    <arg name="pcap" value="$(arg pcap)"/>
+    <arg name="device_ip" value="192.168.140.61"/>
+    <arg name="port" value="61000" />
+  </include>
+
+
+<!--<group ns="camera">
+                <node name="image_proc" pkg="image_proc" type="image_proc"/>
+        </group>-->
+
+        <node name="camera" pkg="avt_vimba_camera" type="mono_camera_node" output="screen">
+                <param name="guid" value="02-2141A-06107"/>
+                <param name="ip" value="192.168.140.202"/>
+                <!-- <param name="camera_info_url" value="file://$(find avt_vimba_camera)/calibrations/calibration_50-0503343289.yaml"/> -->
+                <param name="camera_info_url" value="file://$(find avt_vimba_camera)/calibrations/hand_tuned_right.yaml"/>
+                <param name="frame_id" value="right_optical"/>		<param name="trig_timestamp_topic" value=""/>
+                <param name="show_debug_prints" value="true"/>
+
+                <!-- Trigger mode:
+                        1. Freerun
+                        2. SyncIn1
+                        3. SyncIn2
+                        4. SyncIn3
+                        5. SyncIn4
+                        6. FixedRate
+                        7. Software
+                -->
+                <param name="trigger_source" value="FixedRate"/>
+
+                <!-- Acquisition mode:
+                        1. Continuous
+                        2. SingleFrame
+                        3. MultiFrame
+                        4. Recorder
+                -->
+                <param name="acquisition_mode" value="Continuous"/>
+
+                <!-- Acquisition rate in fps -->
+                <param name="acquisition_rate" value="12"/>
+
+                <!-- Pixel format:
+                        1. Mono8
+                        2. Mono12
+                        3. Mono12Packed
+                        4. BayerRG8
+                        5. BayerRG12Packed
+                        6. BayerGR12
+                        7. RGB8Packed
+                        8. BGR8Packed
+                -->
+                <param name="pixel_format" value="BayerRG8"/>
+                <!-- Exposure in us -->
+                <param name="exposure" value="5000"/>
+                <!-- Gain in dB -->
+                <param name="gain" value="0"/>
+
+                <!-- Auto control
+                        1. Off
+                        2. Once
+                        3. Continuous
+                -->
+                <param name="exposure_auto" value="Continuous"/>
+                <param name="gain_auto" value="Continuous"/>
+                <param name="whitebalance_auto" value="Continuous"/>
+
+                <param name="binning_x" value="1"/>
+                <param name="binning_y" value="1"/>
+                <param name="decimation_x" value="1"/>
+                <param name="decimation_y" value="1"/>
+                <param name="x_offset" value="0"/>
+                <param name="y_offset" value="0"/>
+                <param name="width" value="1360"/>
+                <param name="height" value="1024"/>
+
+                <param name="stream_bytes_per_second" value="45000000"/>
+        </node>
+
+<!--        <rosparam command="load" file="$(find ros_caffe)/conf/param.yaml" />
+        <node pkg="ros_caffe" type="ros_caffe_test" name="ros_caffe_test" output="screen" >
+        </node>-->
+        <!-- launch-prefix="terminator -x gdb -args  -->
+
+
+
+
+
+
+  <!-- Move base (only costmap) -->
+  <!--
+  <include file="$(find rcv_move_base)/launch/move_base.launch"/>
+ -->
+  <!-- visualization
+       TODO: configuration should come from rcv_ui
+       TODO: seems hard to load correct rviz config from inside rqt perspective file..
+
+
+<node pkg="rqt_gui" type="rqt_gui" name="rcv_dashboard_rqt"
+args="-perspective-file $(find rcv_operation)/rqt_config/rcv.perspective" />
+
+  -->
+  <node pkg="rviz" type="rviz" name="rcv_rviz" args="-d $(find ros_caffe)/rviz_conf/base_rviz_config.rviz" />
+</launch>
